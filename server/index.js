@@ -16,15 +16,24 @@ app.use(cors())
 
 // socket.io
 const http = require('http').Server(app);
-const io = require('socket.io')(http);
+const io = require('socket.io')(http, {
+    cors: {
+        origin: "*",
+        methods: ["GET", "POST"]
+      }
+});
 
 io.on('connection', (socket) => {
-    console.log('user connected!')
-    socket.on('chat message', (msg) => {
-        console.log('message: ' + msg);
-        io.emit('chat message', msg);
-      });
+    socket.on('room', function(room) {
+        socket.join(room);
+        socket.on('chat message', (msg) => {
+            console.log('message: ' + msg)
+            io.sockets.in(room).emit('chat message', msg)
+        })
+    });
 })
+
+app.set('socketio', io)
 
 // Route
 app.get('/', (req, res) => {

@@ -20,13 +20,15 @@ router.post('/send', auth, async (req, res) => {
 
         await newMessage.save()
 
-        const newAttachment = new Attachment({
-            thumbUrl,
-            fileUrl,
-            message: newMessage._id
-        })
-
-        await newAttachment.save()
+        if(type != 'TEXT'){
+            const newAttachment = new Attachment({
+                thumbUrl,
+                fileUrl,
+                message: newMessage._id
+            })
+    
+            await newAttachment.save()
+        }
 
         res.json({
             success: true,
