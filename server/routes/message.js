@@ -2,6 +2,7 @@ const express = require('express')
 const auth = require('../common/auth')
 const Message = require('../model/Message')
 const message = require('../enum/message')
+const Attachment = require('../model/Attachment')
 const router = express.Router()
 
 // @route POST api/message/send
@@ -9,13 +10,23 @@ const router = express.Router()
 // @access public
 router.post('/send', auth, async (req, res) => {
     try {
-        const { room, content }  = req.body
+        const { room, content, type, thumbUrl, fileUrl }  = req.body
         const newMessage = new Message({
             sender: req._id,
             room,
-            content
+            content,
+            type,
         })
-        await newMessage.save();
+
+        await newMessage.save()
+
+        const newAttachment = new Attachment({
+            thumbUrl,
+            fileUrl,
+            message: newMessage._id
+        })
+
+        await newAttachment.save()
 
         res.json({
             success: true,
