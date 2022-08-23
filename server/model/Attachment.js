@@ -2,17 +2,16 @@ const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema
 
-const RoomSchema = new Schema({
-    title: {
+const AttachmentSchema = new Schema({
+    thumbUrl: {
         type: String,
     },
-    isPublic: {
-        type: Boolean,
-        default: false
+    fileUrl: {
+        type: String,
     },
-    creator: {
+    message: {
         type: Schema.Types.ObjectId,
-        ref: 'accounts' 
+        ref: 'messages' 
     },
     createdAt: {
         type: Date,
@@ -28,4 +27,4 @@ const RoomSchema = new Schema({
     },
 })
 
-module.exports =  mongoose.model('rooms', RoomSchema)
+module.exports =  mongoose.model('attachments', AttachmentSchema)

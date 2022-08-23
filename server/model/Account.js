@@ -13,11 +13,11 @@ const AccountSchema = new Schema({
         required: true,
         unique: true
     },
-    ismailverified: {
+    isMailVerified: {
         type: Boolean,
         default: false
     },
-    optinmailflg: {
+    isActive: {
         type: Boolean,
         default: true
     },

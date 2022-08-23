@@ -15,9 +15,14 @@ const MessageSchema = new Schema({
         type: String,
         required: true
     },
-    isread: {
+    isRead: {
         type: Boolean,
         default: false
+    },
+    type: {
+        type: String,
+        enum: ['TEXT', 'FILE'],
+        default: 'TEXT'
     },
     createdAt: {
         type: Date,

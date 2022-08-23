@@ -4,6 +4,7 @@ const argon2 = require("argon2");
 const jwt = require("jsonwebtoken");
 const message = require("../enum/message");
 const Account = require("../model/Account");
+const auth = require("../common/auth");
 
 // @route POST api/account/login
 // @decs Login
@@ -80,7 +81,7 @@ router.post('/register', async (req, res) => {
 
         const token = jwt.sign(
             {
-                _id: account._id,
+                _id: newAccount._id,
             },
             process.env.TOKEN_SECRET
         )
@@ -90,6 +91,32 @@ router.post('/register', async (req, res) => {
             message: message.REGISTER_SUCCESS, 
             token });
         
+    } catch (error) {
+        console.log(error.message)
+        res.status(500).json({ success: false, message: message.SERVER_ERROR });
+    }
+})
+
+// @route PUT api/account/update
+// @decs update account info
+// @access public
+router.put('/update', auth, async (req, res) => {
+    try {
+        const { name, password, isMailVerified, birthdate, genre, lang, isActive } = req.body
+        let updateAccount = {
+            name,
+            password,
+            isMailVerified,
+            birthdate,
+            genre,
+            lang,
+            isActive
+        }
+        
+        updateAccount = await Account.findByIdAndUpdate(req._id, updateAccount, {new: true})
+        
+        if(!updateAccount) res.status(400).json({  success: false })
+        res.json({success: true})
     } catch (error) {
         console.log(error.message)
         res.status(500).json({ success: false, message: message.SERVER_ERROR });

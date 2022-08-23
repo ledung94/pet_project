@@ -3,7 +3,6 @@ require('dotenv').config()
 
 // import libs
 const express = require('express')
-const mongoose = require('mongoose')
 const connectDB = require('./common/connectDB')
 
 // Connect databse
