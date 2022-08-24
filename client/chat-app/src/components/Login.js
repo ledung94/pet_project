@@ -3,12 +3,16 @@ import { loginFields } from "../constants/formFields";
 import FormAction from "./FormAction";
 import FormExtra from "./FormExtra";
 import Input from "./Input";
+import { useCookies } from 'react-cookie';
 
 const fields=loginFields;
 let fieldsState = {};
 fields.forEach(field=>fieldsState[field.id]='');
 
 export default function Login(){
+
+    const [cookies , setCookie] = useCookies(['t-app']);
+
     const [loginState,setLoginState]=useState(fieldsState);
 
     const handleChange=(e)=>{
@@ -24,24 +28,29 @@ export default function Login(){
     const authenticateUser = () =>{
 
 
-        // let loginFields={
-        //         email:loginState['email-address'],
-        //         password:loginState['password']
-        // };
+        let loginFields={
+                mail:loginState['email-address'],
+                password:loginState['password']
+        };
 
-        // const endpoint=``;
-        //  fetch(endpoint,
-        //      {
-        //      method:'POST',
-        //      headers: {
-        //      'Content-Type': 'application/json'
-        //      },
-        //      body:JSON.stringify(loginFields)
-        //      }).then(response=>response.json())
-        //      .then(data=>{
-        //         //API Success from LoginRadius Login API
-        //      })
-        //      .catch(error=>console.log(error))
+        const endpoint=`http://localhost:5000/api/account/login`;
+         fetch(endpoint,
+             {
+             method:'POST',
+             headers: {
+             'Content-Type': 'application/json'
+             },
+             body:JSON.stringify(loginFields)
+             }).then(response=>response.json())
+             .then(data=>{
+                 if(data.success) {
+                     setCookie ("t-app" , data.token , {path: '/'})
+                     setCookie ("t-app" , data.token , {maxAge: 60*60*24*30})
+                     window.location = window.location.origin
+                 }
+                 alert(data.message)
+             })
+             .catch(error=>console.log(error))
     }
 
 
