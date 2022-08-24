@@ -15,12 +15,34 @@ export default function Signup(){
 
     const handleSubmit=(e)=>{
         e.preventDefault();
-        console.log(signupState)
         createAccount()
     }
 
     //handle Signup API Integration here
     const createAccount=()=>{
+
+        let signupFields={
+            mail:signupState['email-address'],
+            password:signupState['password'],
+            name:signupState['username']
+        };
+
+        const endpoint=`http://localhost:5000/api/account/register`;
+        fetch(endpoint,
+            {
+                method:'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body:JSON.stringify(signupFields)
+            }).then(response=>response.json())
+            .then(data=>{
+                if (data.success){
+                    window.location = window.location.origin + "/login"
+                }
+                alert(data.message)
+            })
+            .catch(error=>console.log(error))
 
     }
 
@@ -46,9 +68,6 @@ export default function Signup(){
                 }
                 <FormAction handleSubmit={handleSubmit} text="Signup" />
             </div>
-
-
-
         </form>
     )
 }
