@@ -1,5 +1,5 @@
 import React from "react";
-import { useContext } from "react";
+import {useContext} from "react";
 
 
 import './App.css';
@@ -12,24 +12,33 @@ import SignupPage from './pages/Signup';
 import LoginPage from './pages/Login';
 import HomePage from "./pages/Home";
 import Header from "./components/Header";
-import {loginFlgContext} from "./Context";
+import {Context, ContextProvider} from "./Context";
 
 function App() {
     return (
-            <div>
+        <div>
+            <ContextProvider>
                 <Header/>
                 <BrowserRouter>
                     <Routes>
-                        <Route path="/login" element={<LoginPage/>} onEnter={requireAuth} />
-                        <Route path="/signup" element={<SignupPage/>} />
+                        <Route path="/login" element={<LoginPage/>} onEnter={requireAuth}/>
+                        <Route path="/signup" element={<SignupPage/>}/>
                         <Route path="/" element={<HomePage/>}/>
                     </Routes>
                 </BrowserRouter>
-            </div>
+            </ContextProvider>
+        </div>
     );
 }
+
 function requireAuth() {
-    console.log(loginFlgContext)
+    // console.log(context)
+    // const [context, setContext] = useContext(Context);
+    //
+    // setContext({
+    //     cookies: 'test1'
+    // })
+    // console.log(context)
 }
 
 

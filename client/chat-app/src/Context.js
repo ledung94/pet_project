@@ -1,8 +1,26 @@
 import React, {createContext, useState} from "react";
 import {useCookies} from "react-cookie";
 
-const [cookies , setCookie] = useCookies(['t-app']);
-const [login, setLogin] = useState(cookies.get("t-app"));
-const loginFlgContext = createContext( [{login, setLogin}]);
 
-export {loginFlgContext}
+
+const Context = createContext([{}, () => {}]);
+
+
+const ContextProvider = ({ children }) => {
+    const [cookies , setCookies] = useCookies(['t-app']);
+    const userToken = cookies["t-app"];
+    let userLogged = false;
+    if (userToken) userLogged = true ;
+    const [context, setContext] = useState({
+        cookies: cookies["t-app"],
+        userLogged: userLogged,
+        userName: ''
+    })
+    return (
+        <Context.Provider value={[context, setContext]}>
+            {children}
+        </Context.Provider>
+    );
+};
+
+export { Context, ContextProvider}
