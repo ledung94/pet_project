@@ -78,7 +78,32 @@ router.get('/list', auth, async (req, res) => {
                 $match: { room: {$in: rooms}}
             },
             {
-                $group: { _id: "$room", rooms: { $push: "$$ROOT"}}
+                $lookup: {
+                    from: "accounts",
+                    localField: 'sender',
+                    foreignField: '_id',
+                    as: 'sender_info'
+                }
+            },
+            {
+                $unwind: "$sender_info"
+            },
+            {
+                $lookup: {
+                    from: "rooms",
+                    localField: 'room',
+                    foreignField: '_id',
+                    as: 'room_info'
+                }
+            },
+            {
+                $unwind: "$room_info"
+            },
+            {
+                $group: { 
+                    _id: "$room",
+                    messages: { $push: "$$ROOT"}
+                }
             }
         ])
 
