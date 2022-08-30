@@ -14,8 +14,8 @@ router.get('/open?:id', auth, async (req, res) => {
         const { id } = req.query
 
         const messages = await Message.find({room: id})
-                        .populate({path: 'sender', select: {}})
-                        .populate({path: 'room', select: 'name'})
+                        .populate({path: 'sender', match: {_id : {$ne: req._id}}, select: ['name', 'mail']})
+                        .populate({path: 'room', select: {}})
 
         res.json({ success: true, messages})
         
@@ -89,9 +89,15 @@ router.get('/list', auth, async (req, res) => {
                 $unwind: "$sender_info"
             },
             {
+                $group: { 
+                    _id: "$room",
+                    messages: { $push: "$$ROOT"}
+                }
+            },
+            {
                 $lookup: {
                     from: "rooms",
-                    localField: 'room',
+                    localField: '_id',
                     foreignField: '_id',
                     as: 'room_info'
                 }
@@ -99,12 +105,6 @@ router.get('/list', auth, async (req, res) => {
             {
                 $unwind: "$room_info"
             },
-            {
-                $group: { 
-                    _id: "$room",
-                    messages: { $push: "$$ROOT"}
-                }
-            }
         ])
 
         res.json({ 
